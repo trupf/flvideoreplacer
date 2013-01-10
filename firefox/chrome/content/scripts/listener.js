@@ -105,8 +105,8 @@ var flvideoreplacerListener = {
 					if(sourceurl.match(/youporn\.com\/watch\//)){
 						replacevideo = this.prefs.getBoolPref("other");
 //						videoelement = "player";
-						videoelement = "videoContainer";
-//						videoelement = "videoCanvas";
+//						videoelement = "videoContainer";
+						videoelement = "videoCanvas";
 //						videowidth = "610";
 //						videoheight = "480";
 						videowidth = "600";
@@ -874,12 +874,11 @@ var flvideoreplacerListener = {
 				videoid = sourceurl.replace(/.*watch\//g, "").replace(/\/.*/,"");
 
 				//declare element to be replaced
-//				videoelement = "videoCanvas";
-				videoelement = "videoContainer";
-///				testelement = doc.getElementById(videoelement).children[4].children[0];
-
+				videoelement = "videoCanvas";
+//				videoelement = "videoContainer";
 				// lookup video adress
-				testelement = doc.getElementById(videoelement);
+				testelement = doc.getElementById(videoelement).children[4].children[0];
+//				testelement = doc.getElementById(videoelement);
 				if (testelement !== null) {
 					//fetch page html content
 					pagecontent = doc.getElementsByTagName("body").item(0).innerHTML;
@@ -889,10 +888,7 @@ var flvideoreplacerListener = {
 
 						//match patterns
 //						matchpattern = /addVariable\('file'/.test(newline[i]);
-//						matchpattern = /'video_url'.*encodeURIComponent(/.test(newline[i]);
-						matchpattern = /video_url.*encodeURIComponent/.test(newline[i]);
-
-//						matchpattern = /'#videoContainer'\)\.html\('<video.src=/.test(newline[i]);
+						matchpattern = /'video_url'.*encodeURIComponent/.test(newline[i]);
 
 						if (matchpattern === true) {
 //							videourl = decodeURIComponent(newline[i]).replace(/.*'#videoContainer'\)\.html\('<video src=\"/,"").replace(/".*/,"").replace(/\&amp;/g,"&");
