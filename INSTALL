@@ -1,0 +1,18 @@
+Installation Instructions
+*************************
+
+Currently only the firefox branch is maintained.
+
+Steps for installation:
+
+1. Pack the contents of the folder "firefox" into a ZIP archive
+   and name this archive flvideoreplacer@trupf.xpi
+
+   Example command line for Linux:
+
+   cd firefox ; zip -r ../flvideoreplacer.xpi * ; cd ..
+
+2. Uninstall a former version of flvideoreplacer in firefox.
+
+3. Open the created file flvideoreplacer@trupf.xpi in
+   firefox to install the extension.
