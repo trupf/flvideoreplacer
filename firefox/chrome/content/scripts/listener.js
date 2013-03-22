@@ -100,6 +100,8 @@ var flvideoreplacerListener = {
 						videoelement = "FlashWrap";
 						videowidth = "615";
 						videoheight = "400";
+						videowidth = "640";
+						videoheight = "364";
 						testelement = doc.getElementById(videoelement);
 					}  
 					if(sourceurl.match(/youporn\.com\/watch\//)){
@@ -820,8 +822,8 @@ var flvideoreplacerListener = {
 						videojson = {};
 						videojson.sitename = "Metacafe";
 						videojson.sitestring = "metacafe";
-						videojson.videowidth = "615";
-						videojson.videoheight = "400";
+						videojson.videowidth = "640";
+						videojson.videoheight = "364";
 						videojson.videoelement = "FlashWrap";
 						videojson.background = thumbnail;
 						videojson.thumbnail = thumbnail;
@@ -874,11 +876,13 @@ var flvideoreplacerListener = {
 				videoid = sourceurl.replace(/.*watch\//g, "").replace(/\/.*/,"");
 
 				//declare element to be replaced
+//				videoelement = "videoCanvas";
+//				testelement = doc.getElementById(videoelement).children[4].children[0];
 				videoelement = "videoCanvas";
+				testelement = doc.getElementById(videoelement).children[0].children[3];
 //				videoelement = "videoContainer";
-				// lookup video adress
-				testelement = doc.getElementById(videoelement).children[4].children[0];
 //				testelement = doc.getElementById(videoelement);
+				// lookup video adress
 				if (testelement !== null) {
 					//fetch page html content
 					pagecontent = doc.getElementsByTagName("body").item(0).innerHTML;
@@ -887,12 +891,13 @@ var flvideoreplacerListener = {
 					for(var i=0; i< newline.length; i++){
 
 						//match patterns
-//						matchpattern = /addVariable\('file'/.test(newline[i]);
-						matchpattern = /'video_url'.*encodeURIComponent/.test(newline[i]);
+//						matchpattern = /'video_url'.*encodeURIComponent/.test(newline[i]);
+						matchpattern = /var encryptedURL = '.*'/.test(newline[i]);
 
 						if (matchpattern === true) {
 //							videourl = decodeURIComponent(newline[i]).replace(/.*'#videoContainer'\)\.html\('<video src=\"/,"").replace(/".*/,"").replace(/\&amp;/g,"&");
-							videourl = decodeURIComponent(newline[i]).replace(/.*encodeURIComponent\('/,"").replace(/'.*/,"");
+//							videourl = decodeURIComponent(newline[i]).replace(/.*encodeURIComponent\('/,"").replace(/'.*/,"");
+							videourl = decodeURIComponent(newline[i]).replace(/.*var encryptedURL = '/,"").replace(/'.*/,"");
 							replacevideo = true;
 						};
 						matchpattern = /'video_title'/.test(newline[i]);
@@ -1008,6 +1013,7 @@ var flvideoreplacerListener = {
 						matchpattern = /var flashvars = {.*"image_url"/.test(newline[i]);
 						if (matchpattern === true) {
 							thumbnail = decodeURIComponent(newline[i]).replace(/.*"image_url"\:"/,"").replace(/".*/,"");
+							
 						};
 						matchpattern = /var flashvars = {.*"encrypted"/.test(newline[i]);
 						if (matchpattern === true) {
@@ -1040,7 +1046,7 @@ var flvideoreplacerListener = {
 						videojson.videoelement = "playerDiv_1";
 						videojson.videofmt = "97";
 						videojson.thumbnail = thumbnail;
-						videojson.background = thumbnail.replace(/main\.jpg/,"large.jpg");
+						videojson.background = thumbnail.replace(/180x135\/12.jpg/,"400x300/12.jpg");
 						videojson.videomime = newmimetype;
 						videojson.videourl = videourl;
 						JSONStrings = JSON.stringify(videojson);
@@ -1133,6 +1139,11 @@ var flvideoreplacerListener = {
 						}else{
 							this.prefs.setCharPref("filemime",mimetype);
 						}
+						thumbnail=videoid;
+						while(thumbnail.length<7){
+							thumbnail = "0" + thumbnail;
+						}
+						thumbnail="http://img01.redtubefiles.com/_thumbs/000"+thumbnail.substr(0,4)+"/"+thumbnail+"/"+thumbnail;
 
 						//store download path
 						this.prefs.setCharPref("downloadersource.redtube."+videoid,videourl);
@@ -1144,6 +1155,8 @@ var flvideoreplacerListener = {
 						videojson.videowidth = "584";
 						videojson.videoheight = "468";
 						videojson.videoelement = "redtube_flvideoreplacer";
+						videojson.thumbnail = thumbnail+"_012n.jpg";
+						videojson.background = thumbnail+"_012b.jpg";
 						videojson.videofmt = "97";
 						videojson.videomime = newmimetype;
 						videojson.videourl = videourl;
@@ -1264,8 +1277,6 @@ var flvideoreplacerListener = {
 			}else if(sourceurl.match(/youporn\.com\/watch\//)){
 ///				videoplayer = doc.getElementById(videoelement).children[4].children[0];
 				videoplayer = doc.getElementById(videoelement);
-				doc.getElementById(videoelement);
-				
 
 			}else if(sourceurl.match(/redtube\.com\/\d{1,8}/)){
 				videoplayer = doc.getElementById("redtube_flv_player");
@@ -1283,23 +1294,37 @@ var flvideoreplacerListener = {
 			flvideoreplacer = doc.createElement('div');
 			flvideoreplacer.setAttribute("id", videoelement);
 			if(typeof(jsonObjectLocal.background) === "string"){
-//			if(sourceurl.match(/metacafe\.com/) || sourceurl.match(/vimeo\.com/) || sourceurl.match(/youtube.*watch.*v\=/)){
-				flvideoreplacer.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: 100%; width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
+//				flvideoreplacer.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: contain; width:"+videowidth+"px; height:"+videoheight+"px; visibility: visible; text-align:center; vertical-align:middle;");
+				flvideoreplacer.setAttribute("style","visibility: visible; text-align:center; vertical-align:middle;");
 			}else{
-				flvideoreplacer.setAttribute("style"," width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
+//				flvideoreplacer.setAttribute("style"," width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
+				flvideoreplacer.setAttribute("style","visibility: visible; text-align:center; vertical-align:middle;");
 			}
 			var table = doc.createElement('table');
-			// required for pornhub, doesn't hurt the others
-			table.setAttribute("align","left")
-			
+			// required for pornhub
+			if(sourceurl.match(/pornhub\.com/)){
+				table.setAttribute("align","left")
+			}else{
+				table.setAttribute("align","center")
+			}
+			if(typeof(jsonObjectLocal.background) === "string"){
+				table.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: contain; width:"+videowidth+"px; height:"+videoheight+"px; visibility: visible; text-align:center; vertical-align:middle;");
+			}else{
+				table.setAttribute("style"," width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
+			}
 			var tr1 = table.appendChild(document.createElement("tr"));
 			var td1 = doc.createElement('td');
 			td1.setAttribute("width",videowidth);
 			td1.setAttribute("height",videoheight);
 			td1.setAttribute("align","center");
-			td1.setAttribute("valign","middle");
+//			td1.setAttribute("valign","middle");
+			td1.setAttribute("style","vertical-align: middle !important;");
 			td1 = tr1.appendChild(td1);
 			var br = td1.appendChild(doc.createElement('br'));
+//			br.setAttribute("width",videowidth);
+//			br.setAttribute("height",videoheight);
+//			br.setAttribute("align","center");
+//			br.setAttribute("valign","middle");
 			var image = doc.createElement('img');
 			image.setAttribute("id","flvplaceholder");
 			image.setAttribute("branch", aBranch);
@@ -1486,10 +1511,13 @@ var flvideoreplacerListener = {
 
 			}else{ 
 				if(sourceurl.match(/youporn\.com/)){
-					childdivs = doc.getElementById("videoCanvas");
-					videodiv = childdivs.children[4];
-//					videodiv.removeChild(videodiv.children[0]);
-//					videodiv.insertBefore(flvideoreplacer,videodiv.children[0]);
+////					childdivs = doc.getElementById("videoCanvas");
+					childdivs = doc.getElementById(videoelement).parentNode;
+//					videodiv = childdivs.children[4];
+					videodiv = childdivs.children[0];
+					videodiv = doc.getElementById(videoelement).parentNode;
+//					videodiv.removeChild(videodiv.children[3]);
+//					videodiv.insertBefore(flvideoreplacer,videodiv.children[3]);
 					videodiv.insertBefore(flvideoreplacer,videoplayer);
 					videodiv.removeChild(flvideoreplacer.nextSibling);
 //					flvideoreplacer.setAttribute("style", "visibility: visible");
