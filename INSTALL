@@ -10,7 +10,7 @@ Steps for installation:
 
    Example command line for Linux:
 
-   cd firefox ; zip -r ../flvideoreplacer.xpi * ; cd ..
+   cd firefox ; zip -r -X -x Makefile ../flvideoreplacer@trupf.xpi * ; cd ..
 
 2. Uninstall a former version of flvideoreplacer in firefox.
 

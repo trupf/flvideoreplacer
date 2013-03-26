@@ -18,6 +18,7 @@ var flvideoreplacerListener = {
 
 			//get prefs
 			var delay = this.prefs.getIntPref("delay");
+			var vimeodelay = this.prefs.getIntPref("vimeodelay");
 			var enabled = this.prefs.getBoolPref("enabled");
 
 			if(enabled === true){
@@ -63,7 +64,8 @@ var flvideoreplacerListener = {
 					//check if video should be replaced
 					if(sourceurl.match(/youtube.*watch.*v\=/)){
 						replacevideo = this.prefs.getBoolPref("youtube");
-						videoelement = "watch7-player";
+//						videoelement = "watch7-player";
+						videoelement = "player-api";
 						videowidth = "642";
 						videoheight = "390";
 						try{
@@ -83,23 +85,21 @@ var flvideoreplacerListener = {
 						videoelement = "video";
 						videowidth = "960";
 						videoheight = "540";
+						delay = vimeodelay;
 						testelement = doc.getElementById(videoelement);
 					}else{
 						if(sourceurl.match(/vimeo\.com/)){
 							replacevideo = this.prefs.getBoolPref("vimeo");
 							videoelement = "featured_player";
-//								videowidth = "640";
-//								videoheight = "384";
 							videowidth = "960";
 							videoheight = "540";
+							delay = vimeodelay;
 							testelement = doc.getElementById(videoelement);
 						}
 					}
 					if(sourceurl.match(/metacafe\.com\/watch\//)){
 						replacevideo = this.prefs.getBoolPref("metacafe");
 						videoelement = "FlashWrap";
-						videowidth = "615";
-						videoheight = "400";
 						videowidth = "640";
 						videoheight = "364";
 						testelement = doc.getElementById(videoelement);
@@ -169,15 +169,8 @@ var flvideoreplacerListener = {
 										//replace video
 										videodiv.parentNode.replaceChild(divreplacer, videodiv);
 									}else{
-//										if(sourceurl.match(/youporn\.com/)){
-//											var childdivs = testelement.getElementsByTagName("div");
-//											var videodiv = childdivs[14];
-//											//replace video
-//											videodiv.parentNode.replaceChild(divreplacer, videodiv);
-//										}else{
-											//replace video
-											testelement.parentNode.replaceChild(divreplacer, testelement);
-//										}
+										//replace video
+										testelement.parentNode.replaceChild(divreplacer, testelement);
 									}
 								}
 							}
@@ -315,7 +308,8 @@ var flvideoreplacerListener = {
 					//do nothing
 				}
 //				matchpattern = /watch.?-player/.test(doc.getElementById("body"));
-				videoelement = "watch7-player";
+//				videoelement = "watch7-player";
+				videoelement = "player-api";
 				testelement = doc.getElementById(videoelement);
 
 				if (testelement !== null) {
@@ -570,8 +564,8 @@ var flvideoreplacerListener = {
 										videojson = {};
 										videojson.sitename = "YouTube";
 										videojson.sitestring = "youtube";
-										videojson.videowidth = "642";
-										videojson.videoheight = "390";
+										videojson.videowidth = "642px";
+										videojson.videoheight = "390px";
 										videojson.videoelement = videoelement;
 										videojson.background = "http://img.youtube.com/vi/"+videoid+"/hqdefault.jpg";
 										videojson.thumbnail = "http://img.youtube.com/vi/"+videoid+"/default.jpg";
@@ -615,8 +609,7 @@ var flvideoreplacerListener = {
 								}
 							}
 						}
-					};
-//					req.send(null);
+					}
 				}
 			}
 			if(sourceurl.match(/vimeo\.com\/\d{1,8}/)){
@@ -650,6 +643,7 @@ var flvideoreplacerListener = {
 					key = configstr["request"]["signature"];
 
 //					if(prefermp4 === true){
+					//always prefer mp4 at vimeo
 						codecs = [['h264', 'mp4'], ['vp8', 'flv'], ['vp6', 'flv']];
 //					}else{
 //						codecs = [['vp8', 'flv'], ['vp6', 'flv'], ['h264', 'mp4']];
@@ -703,23 +697,13 @@ var flvideoreplacerListener = {
 						//store download path
 						this.prefs.setCharPref("downloadersource.vimeo."+videoid,videourl);
 
-//						pagecontent = doc.getElementsByTagName("head").item(0).innerHTML;
 						//store video branch
 						videojson = {};
 						videojson.sitename = "Vimeo";
 						videojson.sitestring = "vimeo";
 						videojson.videowidth = "960";
-//						if(configstr["video"]["width"]>960){
-//							videojson.videowidth = "960";
-//							videojson.videoheight = String(Math.round(configstr["video"]["height"]/configstr["video"]["width"]*960));
-//						}else{
-//							videojson.videowidth = configstr["video"]["width"];
-//							videojson.videoheight = configstr["video"]["height"];
-//						}
-//						videojson.videowidth = pagecontent.split('itemprop="width" content="')[1].split('">')[0];
-//						videojson.videoheight = pagecontent.split('itemprop="height" content="')[1].split('">')[0];
-						videojson.videowidth = videowidth;
-						videojson.videoheight = videoheight;
+						videojson.videowidth = videowidth+"px";
+						videojson.videoheight = videoheight+"px";
 						videojson.videoelement = videoelement;
 						videojson.background = configstr["video"]["thumbnail"];
 						videojson.thumbnail = configstr["video"]["thumbnail"];
@@ -789,7 +773,6 @@ var flvideoreplacerListener = {
 							replacevideo = true;
 						}else{ if (matchpattern2 === true) {
 							videourl = decodeURIComponent(newline[i]).replace(/\t/g,"").replace(/\n/g,"").replace(/ /g,"").replace(/.*mediaURL":"http/,"http").replace(/",.*/,"").replace(/\\/g,"");
-//							key = decodeURIComponent(newline[i]).replace(/\t/g,"").replace(/\n/g,"").replace(/ /g,"").replace(/.*key":"/,"").replace(/"\}.*/,"");
 							key = decodeURIComponent(newline[i]).replace(/\t/g,"").replace(/\n/g,"").replace(/ /g,"").replace(/.*key":"__gda__","value":"/,"").replace(/".*/,"");
 							videourl = videourl+"?__gda__="+key;
 							replacevideo = true;
@@ -822,9 +805,9 @@ var flvideoreplacerListener = {
 						videojson = {};
 						videojson.sitename = "Metacafe";
 						videojson.sitestring = "metacafe";
-						videojson.videowidth = "640";
-						videojson.videoheight = "364";
-						videojson.videoelement = "FlashWrap";
+						videojson.videowidth = "640px";
+						videojson.videoheight = "364px";
+						videojson.videoelement = videoelement;
 						videojson.background = thumbnail;
 						videojson.thumbnail = thumbnail;
 						videojson.videofmt = "97";
@@ -876,8 +859,6 @@ var flvideoreplacerListener = {
 				videoid = sourceurl.replace(/.*watch\//g, "").replace(/\/.*/,"");
 
 				//declare element to be replaced
-//				videoelement = "videoCanvas";
-//				testelement = doc.getElementById(videoelement).children[4].children[0];
 				videoelement = "videoCanvas";
 				testelement = doc.getElementById(videoelement).children[0].children[3];
 //				videoelement = "videoContainer";
@@ -891,12 +872,9 @@ var flvideoreplacerListener = {
 					for(var i=0; i< newline.length; i++){
 
 						//match patterns
-//						matchpattern = /'video_url'.*encodeURIComponent/.test(newline[i]);
 						matchpattern = /var encryptedURL = '.*'/.test(newline[i]);
 
 						if (matchpattern === true) {
-//							videourl = decodeURIComponent(newline[i]).replace(/.*'#videoContainer'\)\.html\('<video src=\"/,"").replace(/".*/,"").replace(/\&amp;/g,"&");
-//							videourl = decodeURIComponent(newline[i]).replace(/.*encodeURIComponent\('/,"").replace(/'.*/,"");
 							videourl = decodeURIComponent(newline[i]).replace(/.*var encryptedURL = '/,"").replace(/'.*/,"");
 							replacevideo = true;
 						};
@@ -916,7 +894,6 @@ var flvideoreplacerListener = {
 
 					if(replacevideo === true){
 //						videoelement = "videoContainer";
-//						testelement = doc.getElementById(videoelement);
 
 						// decrypt videourl
 						if(encrypted === "true"){
@@ -938,11 +915,9 @@ var flvideoreplacerListener = {
 						videojson = {};
 						videojson.sitename = "Youporn";
 						videojson.sitestring = "youporn";
-						videojson.videowidth = "600";
-						videojson.videoheight = "470";
-//						videojson.videowidth = testelement.videowidth;
-//						videojson.videoheight = testelement.videoheight;
-						videojson.videoelement = "videoContainer";
+						videojson.videowidth = "620px";
+						videojson.videoheight = "465px";
+						videojson.videoelement = videoelement;
 						videojson.videofmt = "97";
 						videojson.thumbnail = thumbnail;
 						videojson.background = thumbnail;
@@ -991,11 +966,18 @@ var flvideoreplacerListener = {
 				//declare element to be replaced
 				videoelement = "playerDiv_1";
 				testelement = doc.getElementById(videoelement);
+				videowidth = "610px";
+				videoheight = "480px";
 
 				if (testelement !== null) {
 
 					//fetch page html content
 					pagecontent = doc.getElementsByTagName("body").item(0).innerHTML;
+					matchpattern = /div id="player-hd"/.test(pagecontent);
+					if (matchpattern === true) {
+						videowidth = "100%";
+						videoheight = "100%";
+					}
 					newline = pagecontent.split("\n");
 
 					for(var i=0; i< newline.length; i++){
@@ -1009,16 +991,21 @@ var flvideoreplacerListener = {
 						matchpattern = /var flashvars = {.*"video_title"/.test(newline[i]);
 						if (matchpattern === true) {
 							var videotitle = decodeURIComponent(newline[i]).replace(/.*"video_title"\:"/,"").replace(/".*/,"").replace(/\+/g," ");
-						};
+						}
 						matchpattern = /var flashvars = {.*"image_url"/.test(newline[i]);
 						if (matchpattern === true) {
 							thumbnail = decodeURIComponent(newline[i]).replace(/.*"image_url"\:"/,"").replace(/".*/,"");
 							
-						};
+						}
 						matchpattern = /var flashvars = {.*"encrypted"/.test(newline[i]);
 						if (matchpattern === true) {
 							var encrypted = decodeURIComponent(newline[i]).replace(/.*"encrypted"\:/,"").replace(/,.*/,"");
-						};
+						}
+//						matchpattern = /div id="player-hd"/.test(newline[i]);
+//						if (matchpattern === true) {
+//							videowidth = "750px";
+//							videoheight = "440px";
+//						}
 					}
 
 					if(replacevideo === true){
@@ -1041,8 +1028,8 @@ var flvideoreplacerListener = {
 						videojson = {};
 						videojson.sitename = "PornHub";
 						videojson.sitestring = "pornhub";
-						videojson.videowidth = "610";
-						videojson.videoheight = "480";
+						videojson.videowidth = videowidth;
+						videojson.videoheight = videoheight;
 						videojson.videoelement = "playerDiv_1";
 						videojson.videofmt = "97";
 						videojson.thumbnail = thumbnail;
@@ -1152,8 +1139,8 @@ var flvideoreplacerListener = {
 						videojson = {};
 						videojson.sitename = "RedTube";
 						videojson.sitestring = "redtube";
-						videojson.videowidth = "584";
-						videojson.videoheight = "468";
+						videojson.videowidth = "584px";
+						videojson.videoheight = "468px";
 						videojson.videoelement = "redtube_flvideoreplacer";
 						videojson.thumbnail = thumbnail+"_012n.jpg";
 						videojson.background = thumbnail+"_012b.jpg";
@@ -1245,7 +1232,6 @@ var flvideoreplacerListener = {
 			var newmimetype = flvideoreplacerListener.sanitizeString(jsonObjectLocal.videomime);
 			var fmt = flvideoreplacerListener.sanitizeString(jsonObjectLocal.videofmt);
 			if(typeof(jsonObjectLocal.background) === "string"){
-//			if(sourceurl.match(/youtube.*watch.*v\=/) || sourceurl.match(/vimeo\.com/) || sourceurl.match(/metacafe\.com/)){
 				var background = flvideoreplacerListener.sanitizeString(jsonObjectLocal.background);
 				var thumbnail =  flvideoreplacerListener.sanitizeString(jsonObjectLocal.thumbnail);
 			}
@@ -1275,7 +1261,7 @@ var flvideoreplacerListener = {
 				videoplayer = doc.getElementById(videoelement);
 
 			}else if(sourceurl.match(/youporn\.com\/watch\//)){
-///				videoplayer = doc.getElementById(videoelement).children[4].children[0];
+				videoplayer = doc.getElementById(videoelement).children[0].children[3];
 				videoplayer = doc.getElementById(videoelement);
 
 			}else if(sourceurl.match(/redtube\.com\/\d{1,8}/)){
@@ -1291,7 +1277,11 @@ var flvideoreplacerListener = {
 				videoplayer = doc.getElementById(videoelement);
 			}
 			//create the injected placeholder
-			flvideoreplacer = doc.createElement('div');
+			if(sourceurl.match(/youtube.*watch.*v\=/)){
+				flvideoreplacer = doc.createElement('div');
+			}else{
+				flvideoreplacer = doc.createElement('object');
+			}
 			flvideoreplacer.setAttribute("id", videoelement);
 			if(typeof(jsonObjectLocal.background) === "string"){
 //				flvideoreplacer.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: contain; width:"+videowidth+"px; height:"+videoheight+"px; visibility: visible; text-align:center; vertical-align:middle;");
@@ -1300,36 +1290,26 @@ var flvideoreplacerListener = {
 //				flvideoreplacer.setAttribute("style"," width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
 				flvideoreplacer.setAttribute("style","visibility: visible; text-align:center; vertical-align:middle;");
 			}
-			var table = doc.createElement('table');
+//			var table = doc.createElement('table');
+			var table = doc.createElement('div');
 			// required for pornhub
-			if(sourceurl.match(/pornhub\.com/)){
-				table.setAttribute("align","left")
-			}else{
-				table.setAttribute("align","center")
-			}
+//			if(sourceurl.match(/pornhub\.com/)){
+//				table.setAttribute("align","left")
+//			}else{
+//				table.setAttribute("align","center")
+//				table.setAttribute("style","position:relative; top:50%;margin-top:-100px");
+//			}
 			if(typeof(jsonObjectLocal.background) === "string"){
-				table.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: contain; width:"+videowidth+"px; height:"+videoheight+"px; visibility: visible; text-align:center; vertical-align:middle;");
+				table.setAttribute("style","background-image: url("+background+"); background-repeat:no-repeat; background-position: center; background-size: contain; width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
 			}else{
 				table.setAttribute("style"," width:"+videowidth+"; height:"+videoheight+"; visibility: visible; text-align:center; vertical-align:middle;");
 			}
-			var tr1 = table.appendChild(document.createElement("tr"));
-			var td1 = doc.createElement('td');
-			td1.setAttribute("width",videowidth);
-			td1.setAttribute("height",videoheight);
-			td1.setAttribute("align","center");
-//			td1.setAttribute("valign","middle");
-			td1.setAttribute("style","vertical-align: middle !important;");
-			td1 = tr1.appendChild(td1);
-			var br = td1.appendChild(doc.createElement('br'));
-//			br.setAttribute("width",videowidth);
-//			br.setAttribute("height",videoheight);
-//			br.setAttribute("align","center");
-//			br.setAttribute("valign","middle");
+
 			var image = doc.createElement('img');
 			image.setAttribute("id","flvplaceholder");
 			image.setAttribute("branch", aBranch);
 			image.setAttribute("src", placeholderimg);
-			image.setAttribute("style","opacity:0.5; cursor:pointer;");
+			image.setAttribute("style","opacity:0.5; cursor:pointer;position:relative;top:50%;margin-top:-100px");
 			image.addEventListener('mouseover',function (){this.style.opacity='1';},false);
 			image.addEventListener('mouseout',function (){this.style.opacity='0.5';},false);
 			image.addEventListener('click',function (){ 
@@ -1343,12 +1323,12 @@ var flvideoreplacerListener = {
 				evt.initEvent("FLVReplaceEvent", true, false);
 				element.dispatchEvent(evt);
 			},false);
-			image = td1.appendChild(image);
+			image = table.appendChild(image);
 			var div = doc.createElement('div');
-			div.setAttribute("style","position:relative; top:0;");
+			div.setAttribute("style","position:relative; top:50%;");
 			var select = doc.createElement('select');
 			select.setAttribute("id","methodselector");
-			select.setAttribute("style","opacity:0.5;");
+			select.setAttribute("style","opacity:0.5;padding:0");
 			select.addEventListener('mouseover',function (){this.style.opacity='1';},false);
 			select.addEventListener('mouseout',function (){this.style.opacity='0.5';},false);
 			var option1 = doc.createElement('option');
@@ -1384,7 +1364,8 @@ var flvideoreplacerListener = {
 			option3 = select.appendChild(option3);
 			option4 = select.appendChild(option4);
 			select = div.appendChild(select);
-			div = td1.appendChild(div);
+//			div = td1.appendChild(div);
+			div = table.appendChild(div);
 			//add quality selection menu
 			if(sourceurl.match(/youtube.*watch.*v\=/)){
 
@@ -1393,11 +1374,11 @@ var flvideoreplacerListener = {
 
 				//append quality menu elements
 				var qdiv = doc.createElement('div');
-				qdiv.setAttribute("style","position:relative; top:0;");
+				qdiv.setAttribute("style","position:relative; top:50%;");
 
 				var qselect = doc.createElement('select');
 				qselect.setAttribute("id","qualityselector");
-				qselect.setAttribute("style","opacity:0.5;");
+				qselect.setAttribute("style","opacity:0.5;padding:0");
 				qselect.addEventListener('mouseover',function (){this.style.opacity='1';},false);
 				qselect.addEventListener('mouseout',function (){this.style.opacity='0.5';},false);
 
@@ -1500,7 +1481,8 @@ var flvideoreplacerListener = {
 					//do nothing
 				}
 				qselect = qdiv.appendChild(qselect);
-				qdiv = td1.appendChild(qdiv);
+//				qdiv = td1.appendChild(qdiv);
+				qdiv = table.appendChild(qdiv);
 			}
 			flvideoreplacer.appendChild(table);			
 			//replace video object
@@ -1511,23 +1493,9 @@ var flvideoreplacerListener = {
 
 			}else{ 
 				if(sourceurl.match(/youporn\.com/)){
-////					childdivs = doc.getElementById("videoCanvas");
-					childdivs = doc.getElementById(videoelement).parentNode;
-//					videodiv = childdivs.children[4];
-					videodiv = childdivs.children[0];
-					videodiv = doc.getElementById(videoelement).parentNode;
-//					videodiv.removeChild(videodiv.children[3]);
-//					videodiv.insertBefore(flvideoreplacer,videodiv.children[3]);
+					videodiv = videoplayer.parentNode;
 					videodiv.insertBefore(flvideoreplacer,videoplayer);
 					videodiv.removeChild(flvideoreplacer.nextSibling);
-//					flvideoreplacer.setAttribute("style", "visibility: visible");
-//					scripts = doc.getElementsByTagName("script");
-//					for(var i=0; i<scripts.length; i++){
-//						matchpattern = (/ZeroClipboard.setMoviePath/.test(scirpts[i].innerHTML));
-//						if (/ZeroClipboard.setMoviePath/.test(scripts[i].innerHTML)){
-//							scripts[i].parentNode.removeChild(scripts[i].previousSibling.nextSibling);
-//						}
-//					}
 				}else{
 				videoplayer.parentNode.replaceChild(flvideoreplacer, videoplayer);
 				}
@@ -1869,14 +1837,23 @@ var flvideoreplacerListener = {
 						flvideoreplacer.setAttribute("height", videoheight);
 						flvideoreplacer.setAttribute("classid", "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B");
 						flvideoreplacer.setAttribute("type", newmimetype);
-						if(sourceurl.match(/vimeo\.com/)){
-							childdivs = videoplayer.getElementsByTagName("div");
-							videodiv = childdivs[2];
-							//replace video
-							videodiv.parentNode.replaceChild(flvideoreplacer, videodiv);
+						//replace video
+//						if(sourceurl.match(/vimeo\.com/)){
+//							childdivs = videoplayer.getElementsByTagName("div");
+//							videodiv = childdivs[2];
+//							//replace video
+//							videodiv.parentNode.replaceChild(flvideoreplacer, videodiv);
 
+//						}else{
+//							videodiv = videoplayer.children[0];
+//							videoplayer.parentNode.replaceChild(flvideoreplacer, videoplayer);
+////							videoplayer.replaceChild(flvideoreplacer, videodiv);
+//						}
+
+						if(sourceurl.match(/youtube.*watch.*v\=/)){
+							videodiv = videoplayer.children[0];
+							videoplayer.replaceChild(flvideoreplacer, videodiv);
 						}else{
-							//replace video
 							videoplayer.parentNode.replaceChild(flvideoreplacer, videoplayer);
 						}
 						//append params
