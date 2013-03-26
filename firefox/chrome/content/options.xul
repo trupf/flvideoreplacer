@@ -37,6 +37,8 @@
 				type="string" />
 			<preference id="pref_delay" name="extensions.flvideoreplacer.delay"
 				type="int" />
+			<preference id="pref_vimeodelay" name="extensions.flvideoreplacer.vimeodelay"
+				type="int" />
 			<preference id="pref_mimetype" name="extensions.flvideoreplacer.mimetype"
 				type="string" />
 			<preference id="pref_videoquality" name="extensions.flvideoreplacer.videoquality"
@@ -67,7 +69,7 @@
 				type="bool" />
 
 		</preferences>
-		<vbox style="width:420px;height:320px;overflow:auto;" flex="1">
+		<vbox style="width:760px;height:360px;overflow:auto;" flex="1">
 			
 			<tabbox flex="1">
 				<tabs>
@@ -103,13 +105,22 @@
 											</menulist>
 											<spacer height="1" flex="1" />
 										</vbox>
-										<spacer width="5" flex="0" />
+										<spacer width="12" flex="0" />
 										<caption label="&Delay;" tooltiptext="&OptionsTooltipDelay;"/>
 										<spacer width="2" flex="0" />
 										<vbox flex="0">
 											<spacer height="1" flex="1" />
 											<textbox preference="pref_delay" id="delay" min="0" max="5000"
-												increment="100" size="1" type="number" />
+												increment="100" size="1" type="number" width="65" />
+											<spacer height="1" flex="1" />
+										</vbox>
+										<spacer width="12" flex="0" />
+										<caption label="&VimeoDelay;" tooltiptext="&OptionsTooltipVimeoDelay;"/>
+										<spacer width="2" flex="0" />
+										<vbox flex="0">
+											<spacer height="1" flex="1" />
+											<textbox preference="pref_vimeodelay" id="vimeodelay" min="0" max="8000"
+												increment="100" size="1" type="number" width="65" />
 											<spacer height="1" flex="1" />
 										</vbox>
 									</hbox>

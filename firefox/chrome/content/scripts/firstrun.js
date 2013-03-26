@@ -69,6 +69,8 @@ var flvideoreplacerFirstrun = {
 					// set preferences
 					this.prefs.setBoolPref("firstrun", false);
 					this.prefs.setCharPref("version", current);
+					this.prefs.setIntPref("delay", 100);
+					this.prefs.setIntPref("vimeodelay", 5000);
 
 					// set default dir pref
 					var dir = this.prefs.getCharPref("downdir");
