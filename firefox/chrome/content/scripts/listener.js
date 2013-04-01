@@ -966,6 +966,10 @@ var flvideoreplacerListener = {
 				//declare element to be replaced
 				videoelement = "playerDiv_1";
 				testelement = doc.getElementById(videoelement);
+				if(testelement == null) {
+					videoelement = "video-wrapper";
+					testelement = doc.getElementsByClassName(videoelement)[0];
+				}
 				videowidth = "610px";
 				videoheight = "480px";
 
@@ -978,35 +982,13 @@ var flvideoreplacerListener = {
 						videowidth = "100%";
 						videoheight = "100%";
 					}
-					newline = pagecontent.split("\n");
-
-					for(var i=0; i< newline.length; i++){
-
-						//match patterns
-						matchpattern = /var flashvars = {.*"video_url"\:/.test(newline[i]);
-						if (matchpattern === true) {
-							videourl = decodeURIComponent(newline[i]).replace(/.*"video_url"\:"/,"").replace(/".*/,"");
-							replacevideo = true;
-						}
-						matchpattern = /var flashvars = {.*"video_title"/.test(newline[i]);
-						if (matchpattern === true) {
-							var videotitle = decodeURIComponent(newline[i]).replace(/.*"video_title"\:"/,"").replace(/".*/,"").replace(/\+/g," ");
-						}
-						matchpattern = /var flashvars = {.*"image_url"/.test(newline[i]);
-						if (matchpattern === true) {
-							thumbnail = decodeURIComponent(newline[i]).replace(/.*"image_url"\:"/,"").replace(/".*/,"");
-							
-						}
-						matchpattern = /var flashvars = {.*"encrypted"/.test(newline[i]);
-						if (matchpattern === true) {
-							var encrypted = decodeURIComponent(newline[i]).replace(/.*"encrypted"\:/,"").replace(/,.*/,"");
-						}
-//						matchpattern = /div id="player-hd"/.test(newline[i]);
-//						if (matchpattern === true) {
-//							videowidth = "750px";
-//							videoheight = "440px";
-//						}
-					}
+					try {videourl = decodeURIComponent(pagecontent.match('"quality_480p":"(.*?)"')[1]);} catch(e) { };
+					if (videourl == null) {try {videourl = decodeURIComponent(pagecontent.match('"quality_240p":"(.*?)"')[1]); } catch(e) { }};
+					if (videourl == null) {try {videourl = decodeURIComponent(pagecontent.match('"quality_180p":"(.*?)"')[1]); } catch(e) { }};
+					if (videourl != null) replacevideo = true;
+					videotitle = decodeURIComponent(pagecontent.match('"video_title":"(.*?)"')[1].replace(/\+/g," "));
+					thumbnail = decodeURIComponent(pagecontent.match('"image_url":"(.*?)"')[1]);
+					encrypted = pagecontent.match('"encrypted":(.*?),')[1];
 
 					if(replacevideo === true){
 						// decrypt videourl
